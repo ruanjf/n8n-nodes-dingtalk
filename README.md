@@ -32,6 +32,11 @@ $ npm install ../../git/n8n-nodes-dingtalk
 
 4. 重启`n8n`
 
+## 示例workflow
+
+导入demo
+[test/dingding-workflow-robot.json](https://github.com/ruanjf/n8n-nodes-dingtalk/raw/main/test/dingding-workflow-robot.json)
+
 ## License
 
-[MIT](https://github.com/ruanjf/n8n-nodes-dingtalk/blob/master/LICENSE.md)
+[MIT](https://github.com/ruanjf/n8n-nodes-dingtalk/blob/main/LICENSE.md)

@@ -1,5 +1,7 @@
 # n8n-nodes-dingtalk
 
+[![NPM badge](https://img.shields.io/npm/v/n8n-nodes-dingtalk.svg)](https://www.npmjs.com/package/n8n-nodes-dingtalk)
+
 For [钉钉](https://dingtalk.com)
 
 ## 功能

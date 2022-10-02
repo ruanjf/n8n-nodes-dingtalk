@@ -1,9 +1,10 @@
 {
   "name": "n8n-nodes-dingtalk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "keywords": [
     "n8n-community-node-package",
+    "钉钉",
     "dingding",
     "dingtalk"
   ],
@@ -32,12 +33,10 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/DingTalkCustomRobot.credentials.js",
-      "dist/credentials/DingTalk.credentials.js"
+      "dist/credentials/DingTalkCustomRobot.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/DingTalk/DingTalkRobot.node.js",
-      "dist/nodes/DingTalk/DingTalk.node.js"
+      "dist/nodes/DingTalk/DingTalkRobot.node.js"
     ]
   },
   "devDependencies": {

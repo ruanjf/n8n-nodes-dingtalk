@@ -1,5 +1,7 @@
 {
-  "name": "dingding",
+  "meta": {
+    "instanceId": "2eaa8c80dbb1566c0844c519a886ca3155979768a7708d822e3d2f249e224f21"
+  },
   "nodes": [
     {
       "parameters": {},
@@ -9,21 +11,34 @@
       "typeVersion": 1,
       "position": [
         -700,
-        580
+        640
       ]
     },
     {
       "parameters": {
-        "msgtype": "={{ $json[\"msgtype\"] }}",
-        "content": "={{ $json[\"content\"] }}"
+        "functionCode": "const msgs = [{\n    \"at\": {\n        \"atMobiles\":[\n            \"180xxxxxx\"\n        ],\n        \"atUserIds\":[\n            \"user123\"\n        ],\n        \"isAtAll\": false\n    },\n    \"text\": {\n        \"content\":\"我就是我, @XXX 是不一样的烟火\"\n    },\n    \"msgtype\":\"text\"\n},{\n    \"msgtype\": \"link\", \n    \"link\": {\n        \"text\": \"这个即将发布的新版本，创始人xx称它为红树林。而在此之前，每当面临重大升级，产品经理们都会取一个应景的代号，这一次，为什么是红树林\", \n        \"title\": \"时代的火车向前开\", \n        \"picUrl\": \"\", \n        \"messageUrl\": \"https://www.dingtalk.com/s?__biz=MzA4NjMwMTA2Ng==&mid=2650316842&idx=1&sn=60da3ea2b29f1dcc43a7c8e4a7c97a16&scene=2&srcid=09189AnRJEdIiWVaKltFzNTw&from=timeline&isappinstalled=0&key=&ascene=2&uin=&devicetype=android-23&version=26031933&nettype=WIFI\"\n    }\n},{\n     \"msgtype\": \"markdown\",\n     \"markdown\": {\n         \"title\":\"杭州天气\",\n         \"text\": \"#### 杭州天气 @150XXXXXXXX \\n > 9度，西北风1级，空气良89，相对温度73%\\n > ![screenshot](https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png)\\n > ###### 10点20分发布 [天气](https://www.dingtalk.com) \\n\"\n     },\n      \"at\": {\n          \"atMobiles\": [\n              \"150XXXXXXXX\"\n          ],\n          \"atUserIds\": [\n              \"user123\"\n          ],\n          \"isAtAll\": false\n      }\n },{\n    \"actionCard\": {\n        \"title\": \"乔布斯 20 年前想打造一间苹果咖啡厅，而它正是 Apple Store 的前身\", \n        \"text\": \"![screenshot](https://gw.alicdn.com/tfs/TB1ut3xxbsrBKNjSZFpXXcXhFXa-846-786.png) \\n ### 乔布斯 20 年前想打造的苹果咖啡厅 \\n Apple Store 的设计正从原来满满的科技感走向生活化，而其生活化的走向其实可以追溯到 20 年前苹果一个建立咖啡馆的计划\", \n        \"btnOrientation\": \"0\", \n        \"singleTitle\" : \"阅读全文\",\n        \"singleURL\" : \"https://www.dingtalk.com/\"\n    }, \n    \"msgtype\": \"actionCard\"\n},{\n    \"msgtype\": \"actionCard\",\n    \"actionCard\": {\n        \"title\": \"我 20 年前想打造一间苹果咖啡厅，而它正是 Apple Store 的前身\", \n        \"text\": \"![screenshot](https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png) \\n\\n #### 乔布斯 20 年前想打造的苹果咖啡厅 \\n\\n Apple Store 的设计正从原来满满的科技感走向生活化，而其生活化的走向其实可以追溯到 20 年前苹果一个建立咖啡馆的计划\", \n        \"btnOrientation\": \"0\", \n        \"btns\": [\n            {\n                \"title\": \"内容不错\", \n                \"actionURL\": \"https://www.dingtalk.com/\"\n            }, \n            {\n                \"title\": \"不感兴趣\", \n                \"actionURL\": \"https://www.dingtalk.com/\"\n            }\n        ]\n    }\n},{\n    \"msgtype\":\"feedCard\",\n    \"feedCard\": {\n        \"links\": [\n            {\n                \"title\": \"时代的火车向前开1\", \n                \"messageURL\": \"https://www.dingtalk.com/\", \n                \"picURL\": \"https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png\"\n            },\n            {\n                \"title\": \"时代的火车向前开2\", \n                \"messageURL\": \"https://www.dingtalk.com/\", \n                \"picURL\": \"https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png\"\n            }\n        ]\n    }\n},]\n\nreturn msgs;\n// return [ msgs[5] ]"
       },
-      "id": "4b345cac-5531-4271-93cc-709ae7fa7bff",
+      "id": "9a8fff67-6fea-439e-a7f1-9e2e9a8ff283",
+      "name": "Function",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "atUserIds": "1",
+        "content": "我就是我, @XXX 是不一样的烟火"
+      },
+      "id": "1941ce7b-fea9-4d43-a29c-e690a4e18b99",
       "name": "钉钉机器人",
       "type": "n8n-nodes-dingtalk.dingTalkRobot",
       "typeVersion": 1,
       "position": [
-        -240,
-        580
+        -700,
+        800
       ],
       "credentials": {
         "dingTalkCustomRobot": {
@@ -34,48 +49,171 @@
     },
     {
       "parameters": {
-        "functionCode": "const msgs = [{\n    msgtype: \"text\",\n    content: {\n        \"content\":\"我就是我, @XXX 是不一样的烟火\"\n    }\n},{\n    msgtype: \"link\",\n    content: {\n        \"text\": \"这个即将发布的新版本，创始人xx称它为红树林。而在此之前，每当面临重大升级，产品经理们都会取一个应景的代号，这一次，为什么是红树林\", \n        \"title\": \"时代的火车向前开\", \n        \"picUrl\": \"\", \n        \"messageUrl\": \"https://www.dingtalk.com/s?__biz=MzA4NjMwMTA2Ng==&mid=2650316842&idx=1&sn=60da3ea2b29f1dcc43a7c8e4a7c97a16&scene=2&srcid=09189AnRJEdIiWVaKltFzNTw&from=timeline&isappinstalled=0&key=&ascene=2&uin=&devicetype=android-23&version=26031933&nettype=WIFI\"\n    }\n},{\n    msgtype: \"markdown\",\n    content: {\n         \"title\":\"杭州天气\",\n         \"text\": \"#### 杭州天气 @150XXXXXXXX \\n > 9度，西北风1级，空气良89，相对温度73%\\n > ![screenshot](https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png)\\n > ###### 10点20分发布 [天气](https://www.dingtalk.com) \\n\"\n     }\n},{\n    msgtype: \"actionCard\",\n    content: {\n        \"title\": \"乔布斯 20 年前想打造一间苹果咖啡厅，而它正是 Apple Store 的前身\", \n        \"text\": \"![screenshot](https://gw.alicdn.com/tfs/TB1ut3xxbsrBKNjSZFpXXcXhFXa-846-786.png) \\n ### 乔布斯 20 年前想打造的苹果咖啡厅\\n Apple Store 的设计正从原来满满的科技感走向生活化，而其生活化的走向其实可以追溯到 20 年前苹果一个建立咖啡馆的计划\",\n        \"btnOrientation\": \"0\",\n        \"singleTitle\" : \"阅读全文\",\n        \"singleURL\" : \"https://www.dingtalk.com/\"\n    }\n},{\n    msgtype: \"actionCard\",\n    content: {\n        \"title\": \"我 20 年前想打造一间苹果咖啡厅，而它正是 Apple Store 的前身\", \n        \"text\": \"![screenshot](https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png) \\n\\n #### 乔布斯 20 年前想打造的苹果咖啡厅 \\n\\n Apple Store 的设计正从原来满满的科技感走向生活化，而其生活化的走向其实可以追溯到 20 年前苹果一个建立咖啡馆的计划\", \n        \"btnOrientation\": \"0\", \n        \"btns\": [\n            {\n                \"title\": \"内容不错\", \n                \"actionURL\": \"https://www.dingtalk.com/\"\n            }, \n            {\n                \"title\": \"不感兴趣\", \n                \"actionURL\": \"https://www.dingtalk.com/\"\n            }\n        ]\n    }\n},{\n    msgtype: \"feedCard\",\n    content: {\n        \"links\": [\n            {\n                \"title\": \"时代的火车向前开1\", \n                \"messageURL\": \"https://www.dingtalk.com/\", \n                \"picURL\": \"https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png\"\n            },\n            {\n                \"title\": \"时代的火车向前开2\", \n                \"messageURL\": \"https://www.dingtalk.com/\", \n                \"picURL\": \"https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png\"\n            }\n        ]\n    }\n},]\n\n// return [{ json: msgs[1] }];\nreturn msgs;"
+        "msgtype": "link",
+        "title": "时代的火车向前开",
+        "url": "https://www.dingtalk.com/s?__biz=MzA4NjMwMTA2Ng==&mid=2650316842&idx=1&sn=60da3ea2b29f1dcc43a7c8e4a7c97a16&scene=2&srcid=09189AnRJEdIiWVaKltFzNTw&from=timeline&isappinstalled=0&key=&ascene=2&uin=&devicetype=android-23&version=26031933&nettype=WIFI",
+        "text": "这个即将发布的新版本，创始人xx称它为红树林。而在此之前，每当面临重大升级，产品经理们都会取一个应景的代号，这一次，为什么是红树林"
       },
-      "id": "9a8fff67-6fea-439e-a7f1-9e2e9a8ff283",
-      "name": "Function",
-      "type": "n8n-nodes-base.function",
+      "id": "1ab6986b-50d9-4784-9237-7eeba1d4fae4",
+      "name": "钉钉机器人1",
+      "type": "n8n-nodes-dingtalk.dingTalkRobot",
       "typeVersion": 1,
       "position": [
         -460,
-        580
-      ]
+        800
+      ],
+      "credentials": {
+        "dingTalkCustomRobot": {
+          "id": "4",
+          "name": "DingTalkCustomRobot account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "msgtype": "markdown",
+        "title": "杭州天气1",
+        "markdownText": "#### 杭州天气 @150XXXXXXXX \n > 9度，西北风1级，空气良89，相对温度73%\n > ![screenshot](https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png)\n > ###### 10点20分发布 [天气](https://www.dingtalk.com) \n"
+      },
+      "id": "40cf0989-902d-41ff-a5cc-d4b90f91d3ba",
+      "name": "钉钉机器人2",
+      "type": "n8n-nodes-dingtalk.dingTalkRobot",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        800
+      ],
+      "credentials": {
+        "dingTalkCustomRobot": {
+          "id": "4",
+          "name": "DingTalkCustomRobot account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "msgtype": "actionCard",
+        "title": "乔布斯 20 年前想打造一间苹果咖啡厅，而它正是 Apple Store 的前身",
+        "markdownText": "![screenshot](https://gw.alicdn.com/tfs/TB1ut3xxbsrBKNjSZFpXXcXhFXa-846-786.png) \n ### 乔布斯 20 年前想打造的苹果咖啡厅 \n Apple Store 的设计正从原来满满的科技感走向生活化，而其生活化的走向其实可以追溯到 20 年前苹果一个建立咖啡馆的计划",
+        "singleTitle": "阅读全文",
+        "singleURL": "https://www.dingtalk.com/",
+        "btnOrientation": "1"
+      },
+      "id": "626ea602-8bb2-49c0-9c62-3f9dac6dccbb",
+      "name": "钉钉机器人3",
+      "type": "n8n-nodes-dingtalk.dingTalkRobot",
+      "typeVersion": 1,
+      "position": [
+        -700,
+        980
+      ],
+      "credentials": {
+        "dingTalkCustomRobot": {
+          "id": "4",
+          "name": "DingTalkCustomRobot account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "msgtype": "actionCard",
+        "title": "我 20 年前想打造一间苹果咖啡厅，而它正是 Apple Store 的前身",
+        "markdownText": "![screenshot](https://gw.alicdn.com/tfs/TB1ut3xxbsrBKNjSZFpXXcXhFXa-846-786.png) \n ### 乔布斯 20 年前想打造的苹果咖啡厅 \n Apple Store 的设计正从原来满满的科技感走向生活化，而其生活化的走向其实可以追溯到 20 年前苹果一个建立咖啡馆的计划",
+        "isSingleButton": false,
+        "btns": {
+          "buttons": [
+            {
+              "title": "内容不错1",
+              "actionURL": "https://www.dingtalk.com/"
+            },
+            {
+              "title": "内容不错2",
+              "actionURL": "https://www.dingtalk.com/"
+            }
+          ]
+        },
+        "btnOrientation": "1"
+      },
+      "id": "a94a0286-3acb-4216-bcdf-6722296d93f5",
+      "name": "钉钉机器人4",
+      "type": "n8n-nodes-dingtalk.dingTalkRobot",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        980
+      ],
+      "credentials": {
+        "dingTalkCustomRobot": {
+          "id": "4",
+          "name": "DingTalkCustomRobot account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "msgtype": "feedCard",
+        "lks": {
+          "links": [
+            {
+              "title": "时代的火车向前开1",
+              "messageURL": "https://www.dingtalk.com/",
+              "picURL": "https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png"
+            },
+            {
+              "title": "时代的火车向前开2",
+              "messageURL": "https://www.dingtalk.com/",
+              "picURL": "https://img.alicdn.com/tfs/TB1NwmBEL9TBuNjy1zbXXXpepXa-2400-1218.png"
+            }
+          ]
+        }
+      },
+      "id": "c6655f5d-c02e-4b37-8811-a87fe4d10da6",
+      "name": "钉钉机器人5",
+      "type": "n8n-nodes-dingtalk.dingTalkRobot",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        980
+      ],
+      "credentials": {
+        "dingTalkCustomRobot": {
+          "id": "4",
+          "name": "DingTalkCustomRobot account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "enableJsonMode": true,
+        "json": "={{$json}}"
+      },
+      "id": "44d9ebb5-af47-4af0-a32f-6a7420ee43e6",
+      "name": "钉钉机器人6",
+      "type": "n8n-nodes-dingtalk.dingTalkRobot",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        640
+      ],
+      "credentials": {
+        "dingTalkCustomRobot": {
+          "id": "4",
+          "name": "DingTalkCustomRobot account 2"
+        }
+      }
     }
   ],
-  "pinData": {},
   "connections": {
     "Function": {
       "main": [
         [
           {
-            "node": "钉钉机器人",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Start": {
-      "main": [
-        [
-          {
-            "node": "Function",
+            "node": "钉钉机器人6",
             "type": "main",
             "index": 0
           }
         ]
       ]
     }
-  },
-  "active": false,
-  "settings": {},
-  "id": 4,
-  "meta": {
-    "instanceId": "2eaa8c80dbb1566c0844c519a886ca3155979768a7708d822e3d2f249e224f21"
-  },
-  "tags": []
+  }
 }

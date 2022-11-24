@@ -33,7 +33,8 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/DingTalkCustomRobot.credentials.js"
+      "dist/credentials/DingTalkCustomRobot.credentials.js",
+      "dist/credentials/DingTalkCompany.credentials.js"
     ],
     "nodes": [
       "dist/nodes/DingTalk/DingTalkRobot.node.js"

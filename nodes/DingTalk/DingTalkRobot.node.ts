@@ -1066,7 +1066,9 @@ export class DingTalkRobot implements INodeType {
 							}
 
 						}
-						result.push({ json:{'failUser': failUser} })
+						if(failUser && failUser.length > 0){
+							result.push({ json:{'failUser': failUser} })
+						}
 						if(!userIdList || userIdList.length === 0){
 							return this.prepareOutputData(result);
 						}
@@ -1079,7 +1081,7 @@ export class DingTalkRobot implements INodeType {
 							"robotCode": robotCode,
 							"msgKey": msgKey,
 							"userIds": userIdList,
-							"msgParam": JSON.stringify(nodeParameters)
+							"msgParam": JSON.stringify(nodeParameters).replace(/\\\\/g,"\\")
 						}
 						const batchSendOTORequest = new $RobotClient.BatchSendOTORequest(sendParams);
 						const sendRes = await robotClient.batchSendOTOWithOptions(batchSendOTORequest, batchSendOTOHeaders, new $Util.RuntimeOptions({}));

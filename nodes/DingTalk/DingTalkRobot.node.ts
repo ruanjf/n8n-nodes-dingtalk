@@ -3,17 +3,19 @@ import {
 } from 'n8n-core';
 import {
 	INodeExecutionData,
+	INodeParameters,
 	INodeType,
 	INodeTypeDescription,
-	INodeParameters,
 	NodeOperationError,
 } from 'n8n-workflow';
 import crypto from 'crypto';
 import axios from 'axios';
 
-// import RobotClient, * as $RobotClient from "@alicloud/dingtalk/dist/robot_1_0/client";
-// import * as OpenApi from "@alicloud/openapi-client";
-// import * as Util from "@alicloud/tea-util";
+import Util, * as $Util from '@alicloud/tea-util';
+import RobotClient, * as $RobotClient from "@alicloud/dingtalk/dist/robot_1_0/client";
+import OpenApi, * as $OpenApi from '@alicloud/openapi-client';
+import AuthClient, * as $AuthClient from '@alicloud/dingtalk/dist/oauth2_1_0/client';
+import * as $tea from '@alicloud/tea-typescript';
 
 export class DingTalkRobot implements INodeType {
 	description: INodeTypeDescription = {
@@ -39,6 +41,15 @@ export class DingTalkRobot implements INodeType {
 					},
 				},
 			},
+			{
+				name: 'dingtalkCompany',
+				required: true,
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+					},
+				},
+			},
 		],
 		properties: [
 			{
@@ -54,12 +65,12 @@ export class DingTalkRobot implements INodeType {
 						description: '自定义机器人存在限流, 每分钟20次',
 						action: '自定义机器人',
 					},
-					// {
-					// 	name: '企业内部开发机器人',
-					// 	value: 'companyInternalRobot',
-					// 	description: '企业内部开发机器人',
-					// 	action: '企业内部开发机器人',
-					// },
+					{
+						name: '企业内部开发机器人',
+						value: 'companyInternalRobot',
+						description: '企业内部开发机器人',
+						action: '企业内部开发机器人',
+					},
 				],
 				default: 'customRobot',
 			},
@@ -73,7 +84,7 @@ export class DingTalkRobot implements INodeType {
 				description: '是否使用JSON格式数据模式',
 				displayOptions: {
 					show: {
-						type: ['customRobot'],
+						type: ['customRobot', 'companyInternalRobot'],
 					},
 				},
 			},
@@ -86,8 +97,106 @@ export class DingTalkRobot implements INodeType {
 				description: '数据内容',
 				displayOptions: {
 					show: {
-						type: ['customRobot'],
+						type: ['customRobot', 'companyInternalRobot'],
 						enableJsonMode: [true],
+					},
+				},
+			},
+			{
+				displayName: '用户集合',
+				name: 'userIds',
+				required: true,
+				description: '用户集合',
+				placeholder: '添加用户',
+				type: 'fixedCollection',
+				typeOptions: {
+					multipleValues: true,
+				},
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false]
+					},
+				},
+				default: {},
+				options: [
+					{
+						name: 'users',
+						displayName: '用户',
+						values: [
+							{
+								displayName: '用户电话',
+								name: 'mobile',
+								type: 'number',
+								default: '',
+								description: '用户电话',
+							},
+						],
+					},
+				],
+			},
+			{
+				displayName: '消息类型',
+				name: 'msgKey',
+				type: 'options',
+				required: true,
+				options: [
+					{
+						name: 'sampleText类型',
+						value: 'sampleText',
+						description: 'sampleText类型',
+					},
+					{
+						name: 'sampleMarkdown类型',
+						value: 'sampleMarkdown',
+						description: 'sampleMarkdown类型',
+					},
+					{
+						name: 'sampleImageMsg类型',
+						value: 'sampleImageMsg',
+						description: 'sampleImageMsg类型',
+					},
+					{
+						name: 'sampleLink类型',
+						value: 'sampleLink',
+						description: 'sampleLink类型',
+					},
+					{
+						name: 'sampleActionCard类型',
+						value: 'sampleActionCard',
+						description: '单按钮类型',
+					},
+					{
+						name: 'sampleActionCard2类型',
+						value: 'sampleActionCard2',
+						description: '竖向两个按钮类型',
+					},
+					{
+						name: 'sampleActionCard3类型',
+						value: 'sampleActionCard3',
+						description: '竖向三个按钮类型',
+					},
+					{
+						name: 'sampleActionCard4类型',
+						value: 'sampleActionCard4',
+						description: '竖向四个按钮类型',
+					},
+					{
+						name: 'sampleActionCard5类型',
+						value: 'sampleActionCard5',
+						description: '竖向五个按钮类型',
+					},
+					{
+						name: 'sampleActionCard6类型',
+						value: 'sampleActionCard6',
+						description: '横向两个个按钮类型',
+					},
+				],
+				default: 'sampleText',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
 					},
 				},
 			},
@@ -194,7 +303,26 @@ export class DingTalkRobot implements INodeType {
 					show: {
 						enableJsonMode: [false],
 						type: ['customRobot'],
-						msgtype: ['text'],
+						msgtype: ['text']
+					},
+				},
+			},
+			{
+				displayName: '消息内容',
+				name: 'content',
+				type: 'string',
+				default: '',
+				required: true,
+				placeholder: '',
+				description: '消息内容',
+				typeOptions: {
+					rows: 5,
+				},
+				displayOptions: {
+					show: {
+						enableJsonMode: [false],
+						type: ['companyInternalRobot'],
+						msgKey: ['sampleText']
 					},
 				},
 			},
@@ -209,7 +337,7 @@ export class DingTalkRobot implements INodeType {
 					show: {
 						type: ['customRobot'],
 						enableJsonMode: [false],
-						msgtype: ['markdown','actionCard'],
+						msgtype: ['markdown', 'actionCard'],
 					},
 				},
 			},
@@ -228,7 +356,7 @@ export class DingTalkRobot implements INodeType {
 					show: {
 						type: ['customRobot'],
 						enableJsonMode: [false],
-						msgtype: ['markdown','actionCard'],
+						msgtype: ['markdown', 'actionCard'],
 					},
 				},
 			},
@@ -243,7 +371,23 @@ export class DingTalkRobot implements INodeType {
 					show: {
 						type: ['customRobot'],
 						enableJsonMode: [false],
-						msgtype: ['link'],
+						msgtype: ['link']
+					},
+				},
+			},
+			{
+				displayName: '消息标题',
+				name: 'title',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '消息标题',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleMarkdown','sampleLink','sampleActionCard','sampleActionCard2',
+							'sampleActionCard3','sampleActionCard4','sampleActionCard5','sampleActionCard6']
 					},
 				},
 			},
@@ -297,6 +441,51 @@ export class DingTalkRobot implements INodeType {
 			},
 			{
 				displayName: '点击消息跳转的URL',
+				name: 'singleURL',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '点击消息跳转的URL，打开方式如下：\n移动端，在钉钉客户端内打开\nPC端 默认侧边栏打开、希望在外部浏览器打开',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard']
+					},
+				},
+			},
+			{
+				displayName: '单个按钮的标题',
+				name: 'singleTitle',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '单个按钮的标题',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard']
+					},
+				},
+			},
+			{
+				displayName: '点击消息跳转的URL',
+				name: 'messageUrl',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '点击消息跳转的URL，打开方式如下：\n移动端，在钉钉客户端内打开\nPC端 默认侧边栏打开、希望在外部浏览器打开',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleLink'],
+					},
+				},
+			},
+			{
+				displayName: '点击消息跳转的URL',
 				name: 'url',
 				type: 'string',
 				default: '',
@@ -326,6 +515,36 @@ export class DingTalkRobot implements INodeType {
 				},
 			},
 			{
+				displayName: '图片URL',
+				name: 'picUrl',
+				type: 'string',
+				default: '',
+				required: false,
+				description: '图片URL',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleLink']
+					},
+				},
+			},
+			{
+				displayName: '图片URL',
+				name: 'photoURL',
+				type: 'string',
+				default: '',
+				required: false,
+				description: '图片URL',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleImageMsg'],
+					},
+				},
+			},
+			{
 				displayName: '消息内容',
 				name: 'text',
 				type: 'string',
@@ -341,6 +560,237 @@ export class DingTalkRobot implements INodeType {
 						type: ['customRobot'],
 						enableJsonMode: [false],
 						msgtype: ['link'],
+					},
+				},
+			},
+			{
+				displayName: '消息内容',
+				name: 'text',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '消息内容。如果太长只会部分展示。',
+				placeholder: '',
+				typeOptions: {
+					rows: 5,
+				},
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleMarkdown','sampleLink','sampleActionCard','sampleActionCard2',
+							'sampleActionCard3','sampleActionCard4','sampleActionCard5','sampleActionCard6']
+					},
+				},
+			},
+			{
+				displayName: '按钮1标题',
+				name: 'actionTitle1',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '按钮1标题',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard2','sampleActionCard3','sampleActionCard4','sampleActionCard5']
+					},
+				},
+			},
+			{
+				displayName: '按钮2标题',
+				name: 'actionTitle2',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '按钮2标题',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard2','sampleActionCard3','sampleActionCard4','sampleActionCard5']
+					},
+				},
+			},
+			{
+				displayName: '按钮3标题',
+				name: 'actionTitle3',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '按钮3标题',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard3','sampleActionCard4','sampleActionCard5']
+					},
+				},
+			},
+			{
+				displayName: '按钮4标题',
+				name: 'actionTitle4',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '按钮4标题',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard4','sampleActionCard5']
+					},
+				},
+			},
+			{
+				displayName: '按钮5标题',
+				name: 'actionTitle5',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '按钮5标题',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard5']
+					},
+				},
+			},
+			{
+				displayName: '按钮1链接',
+				name: 'actionURL1',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '按钮1链接',
+				placeholder: '',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard2','sampleActionCard3','sampleActionCard4','sampleActionCard5']
+					},
+				},
+			},
+			{
+				displayName: '按钮2链接',
+				name: 'actionURL2',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '按钮2链接',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard2','sampleActionCard3','sampleActionCard4','sampleActionCard5']
+					},
+				},
+			},
+			{
+				displayName: '按钮3链接',
+				name: 'actionURL3',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '按钮3链接',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard3','sampleActionCard4','sampleActionCard5']
+					},
+				},
+			},
+			{
+				displayName: '按钮4链接',
+				name: 'actionURL4',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '按钮4链接',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard4','sampleActionCard5']
+					},
+				},
+			},
+			{
+				displayName: '按钮5链接',
+				name: 'actionURL5',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '按钮5链接',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard5']
+					},
+				},
+			},
+			{
+				displayName: '横向按钮1标题',
+				name: 'buttonTitle1',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '横向按钮1标题',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard6']
+					},
+				},
+			},
+			{
+				displayName: '横向按钮2标题',
+				name: 'buttonTitle2',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '横向按钮2标题',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard6']
+					},
+				},
+			},
+			{
+				displayName: '横向按钮2跳转链接',
+				name: 'actionTitle1',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '横向按钮2跳转链接',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard6']
+					},
+				},
+			},
+			{
+				displayName: '横向按钮1跳转链接',
+				name: 'buttonUrl1',
+				type: 'string',
+				default: '',
+				required: true,
+				description: '横向按钮1跳转链接',
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleActionCard6']
 					},
 				},
 			},
@@ -459,11 +909,13 @@ export class DingTalkRobot implements INodeType {
 					},
 				],
 			},
+
 		],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const type = this.getNodeParameter('type', 0)
+		const items = this.getInputData();
 		if (type === 'customRobot') {
 			const credentials = await this.getCredentials('dingTalkCustomRobot');
 
@@ -472,9 +924,7 @@ export class DingTalkRobot implements INodeType {
 			const signBase64 = crypto.createHmac('sha256', credentials.webhookSign as string).update(stringToSign).digest("base64");
 			const sign = encodeURIComponent(signBase64);
 			const url = credentials.webhookSign ? `${credentials.webhookUrl}&timestamp=${timestamp}&sign=${sign}` : credentials.webhookUrl as string
-
 			const result = []
-			const items = this.getInputData();
 
 			for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 				try {
@@ -565,7 +1015,105 @@ export class DingTalkRobot implements INodeType {
 			}
 
 			return this.prepareOutputData(result);
+		} else if (type === 'companyInternalRobot') {
+			const credentials = await this.getCredentials('dingtalkCompany');
+			const config = new $OpenApi.Config({});
+			config.protocol = credentials.protocol as string;
+			config.regionId = credentials.regionId as string;
+			const robotClient = new RobotClient(config);
+			const oauth2Client = new AuthClient(config);
+			const getAccessTokenRequest = new $AuthClient.GetAccessTokenRequest({
+				appKey: credentials.accessKeyId,
+				appSecret: credentials.accessKeySecret,
+			});
+			const accessTokenResult = await oauth2Client.getAccessToken(getAccessTokenRequest);
+			const token = accessTokenResult?.body?.accessToken;
+			const batchSendOTOHeaders = new $RobotClient.BatchSendOTOHeaders({});
+			if (!token) {
+				throw new NodeOperationError(this.getNode(), 'get token fail');
+			}
+			const getUserIdByMobileUrl = "https://oapi.dingtalk.com/topapi/v2/user/getbymobile?access_token="+token
+			const result = []
+			const robotCode = credentials.robotCode as string;
+			for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
+				try {
+					const enableJsonMode = this.getNodeParameter('enableJsonMode', itemIndex) as boolean
+					const msgKey = enableJsonMode ? null : this.getNodeParameter('msgKey', itemIndex) as string
+					const data = {} as any
+					batchSendOTOHeaders.xAcsDingtalkAccessToken = token;
+					if (enableJsonMode) {
+						const json = JSON.parse(this.getNodeParameter('json', itemIndex) as string)
+						Object.assign(data, json)
+						const batchSendOTORequest = new $RobotClient.BatchSendOTORequest(data);
+						await robotClient.batchSendOTOWithOptions(batchSendOTORequest, batchSendOTOHeaders, new $Util.RuntimeOptions({}));
+					}else {
+						const nodeParameters = JSON.parse(JSON.stringify(this.getNode().parameters));
+						const userIds:{"users":[]} = nodeParameters?.userIds;
+						const userIdList: string[] = [];
+						let failUser = [];
+						for (let i = 0; i < userIds.users.length; i++){
+							const user: { "mobile": any; } = userIds.users[i];
+							const mobile = user.mobile;
+							const res = await axios.post(getUserIdByMobileUrl, {'mobile':mobile}, {
+								headers: {
+									'Content-Type': 'application/json'
+								}
+							})
+							if(res?.data?.errcode !== 0){
+								failUser.push(mobile);
+							}else {
+								userIdList.push(res?.data?.result?.userid);
+							}
+
+						}
+						result.push({ json:{'failUser': failUser} })
+						if(!userIdList || userIdList.length === 0){
+							return this.prepareOutputData(result);
+						}
+
+						delete nodeParameters.type
+						delete nodeParameters.enableJsonMode
+						delete nodeParameters.userIds
+						delete nodeParameters.msgKey
+						let sendParams = {
+							"robotCode": robotCode,
+							"msgKey": msgKey,
+							"userIds": userIdList,
+							"msgParam": JSON.stringify(nodeParameters)
+						}
+						const batchSendOTORequest = new $RobotClient.BatchSendOTORequest(sendParams);
+						const sendRes = await robotClient.batchSendOTOWithOptions(batchSendOTORequest, batchSendOTOHeaders, new $Util.RuntimeOptions({}));
+						result.push({ json: sendRes.body })
+					}
+
+
+				} catch (error) {
+					if (this.continueOnFail()) {
+						result.push({ json: this.getInputData(itemIndex)[0].json, error, pairedItem: itemIndex });
+					} else {
+						if (error.context) {
+							error.context.itemIndex = itemIndex;
+							throw error;
+						}
+						throw new NodeOperationError(this.getNode(), error, {
+							itemIndex,
+						});
+					}
+				}
+				return this.prepareOutputData(result);
+			}
+
+			return this.prepareOutputData([]);
 		}
+
+		// {
+		// 	robotCode: credentials.robotCode,
+		// 	userIds: [
+		// 		"16546535415453805"
+		// 	],
+		// 	msgKey: "sampleMarkdown",
+		// 	msgParam: "{\"text\": \"hello text\",\"title\": \"hello title\"}",
+		// }
 
 		// // 创建客户端
 		// const rbClient = new RobotClient(new OpenApi.Config({

@@ -262,7 +262,7 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: false,
-				description: '被@人的手机号',
+				description: '被@人的手机号，多个用,隔开',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -278,7 +278,7 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: false,
-				description: '被@人的用户userid',
+				description: '被@人的用户userid，多个用,隔开',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -939,8 +939,8 @@ export class DingTalkRobot implements INodeType {
 
 					} else if ('text' === msgtype || 'markdown' === msgtype) {
 						const isAtAll = this.getNodeParameter('isAtAll', itemIndex)
-						const atMobiles = isAtAll ? null : this.getNodeParameter('atMobiles', itemIndex) as string[]
-						const atUserIds = isAtAll ? null : this.getNodeParameter('atUserIds', itemIndex) as string[]
+						const atMobiles = isAtAll ? null : (this.getNodeParameter('atMobiles', itemIndex) as string)?.split(",")
+						const atUserIds = isAtAll ? null : (this.getNodeParameter('atUserIds', itemIndex) as string)?.split(",")
 						data.at = { isAtAll };
 						if (atMobiles && atMobiles.length > 0) {
 							data.at.atMobiles = atMobiles
@@ -992,7 +992,7 @@ export class DingTalkRobot implements INodeType {
 							links: lks.links
 						}
 					}
-
+					console.log(data);
 					const res = await axios.post(url, data, {
 						headers: {
 							'Content-Type': 'application/json'
@@ -1077,12 +1077,19 @@ export class DingTalkRobot implements INodeType {
 						delete nodeParameters.enableJsonMode
 						delete nodeParameters.userIds
 						delete nodeParameters.msgKey
+						let sendMsgParams = {};
+						// tslint:disable-next-line:forin
+						for (const nodeParametersKey in nodeParameters) {
+							// @ts-ignore
+							sendMsgParams[nodeParametersKey] = this.getNodeParameter(nodeParametersKey, itemIndex)
+						}
 						let sendParams = {
 							"robotCode": robotCode,
 							"msgKey": msgKey,
 							"userIds": userIdList,
-							"msgParam": JSON.stringify(nodeParameters).replace(/\\\\/g,"\\")
+							"msgParam": JSON.stringify(sendMsgParams).replace(/\\\\/g,"\\")
 						}
+						//console.log(sendParams);
 						const batchSendOTORequest = new $RobotClient.BatchSendOTORequest(sendParams);
 						const sendRes = await robotClient.batchSendOTOWithOptions(batchSendOTORequest, batchSendOTOHeaders, new $Util.RuntimeOptions({}));
 						result.push({ json: sendRes.body })

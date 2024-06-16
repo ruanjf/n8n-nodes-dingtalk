@@ -1,6 +1,4 @@
-import {
-	IExecuteFunctions
-} from 'n8n-core';
+import { IExecuteFunctions } from 'n8n-core';
 import {
 	INodeExecutionData,
 	INodeType,
@@ -11,15 +9,14 @@ import {
 import crypto from 'crypto';
 import axios from 'axios';
 
-
-import RobotClient, * as $RobotClient from "@alicloud/dingtalk/dist/robot_1_0/client";
-import * as OpenApi from "@alicloud/openapi-client";
-import * as Util from "@alicloud/tea-util";
+import RobotClient, * as $RobotClient from '@alicloud/dingtalk/dist/robot_1_0/client';
+import * as OpenApi from '@alicloud/openapi-client';
+import * as Util from '@alicloud/tea-util';
 
 export class DingTalk implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'DingDing',
-		name: 'dingtalk',
+		name: 'DingTalk',
 		icon: 'file:dingtalk.svg',
 		group: ['input'],
 		version: 1,
@@ -32,7 +29,7 @@ export class DingTalk implements INodeType {
 		outputs: ['main'],
 		credentials: [
 			{
-				name: 'dingtalk',
+				name: 'dingtalkApi',
 				required: true,
 				displayOptions: {
 					show: {
@@ -41,7 +38,7 @@ export class DingTalk implements INodeType {
 				},
 			},
 			{
-				name: 'dingTalkCustomRobot',
+				name: 'dingTalkCustomRobotApi',
 				required: true,
 				displayOptions: {
 					show: {
@@ -67,7 +64,7 @@ export class DingTalk implements INodeType {
 					{
 						name: 'Webhook',
 						value: 'webhook',
-						description: 'Webhook',
+						// description: 'Webhook',
 						action: 'Webhook',
 					},
 				],
@@ -81,29 +78,29 @@ export class DingTalk implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'text类型',
-						value: 'text',
-						description: 'text类型',
-					},
-					{
-						name: 'link类型',
-						value: 'link',
-						description: 'link类型',
-					},
-					{
-						name: 'markdown类型',
-						value: 'markdown',
-						description: 'markdown类型',
-					},
-					{
 						name: 'ActionCard类型',
 						value: 'actionCard',
-						description: 'ActionCard类型',
+						// description: 'ActionCard类型',
 					},
 					{
 						name: 'FeedCard类型',
 						value: 'feedCard',
-						description: 'FeedCard类型',
+						// description: 'FeedCard类型',
+					},
+					{
+						name: 'Link类型',
+						value: 'link',
+						// description: 'link类型',
+					},
+					{
+						name: 'Markdown类型',
+						value: 'markdown',
+						// description: 'markdown类型',
+					},
+					{
+						name: 'Text类型',
+						value: 'text',
+						// description: 'text类型',
 					},
 				],
 				default: 'text',
@@ -112,9 +109,9 @@ export class DingTalk implements INodeType {
 				displayName: '被@人的手机号',
 				name: 'atMobiles',
 				type: 'string',
-				default: null,
-				required: false,
-				description: '被@人的手机号',
+				default: '',
+				// required: false,
+				// description: '被@人的手机号',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -123,12 +120,12 @@ export class DingTalk implements INodeType {
 				},
 			},
 			{
-				displayName: '被@人的用户userid',
+				displayName: '被@人的用户Userid',
 				name: 'atUserIds',
 				type: 'string',
-				default: null,
-				required: false,
-				description: '被@人的用户userid',
+				default: '',
+				// required: false,
+				// description: '被@人的用户userid',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -141,9 +138,9 @@ export class DingTalk implements INodeType {
 				name: 'isAtAll',
 				type: 'boolean',
 				default: false,
-				required: false,
+				// required: false,
 				placeholder: '',
-				description: '是否@所有人',
+				// description: '是否@所有人',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -158,7 +155,7 @@ export class DingTalk implements INodeType {
 				default: '',
 				required: true,
 				placeholder: '',
-				description: '消息内容',
+				// description: '消息内容',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -177,63 +174,72 @@ export class DingTalk implements INodeType {
 		// 	...baseCredentials
 		// } = credentials;
 
-		const type = this.getNodeParameter('type', 0)
+		const type = this.getNodeParameter('type', 0);
 		if (type === 'customRobot') {
 			const credentials = await this.getCredentials('dingTalkCustomRobot');
 
 			const timestamp = Date.parse(new Date().toString());
 			const stringToSign = `${timestamp}\n${credentials.webhookSign}`;
-			const signBase64 = crypto.createHmac('sha256', credentials.webhookSign as string).update(stringToSign).digest("base64");
+			const signBase64 = crypto
+				.createHmac('sha256', credentials.webhookSign as string)
+				.update(stringToSign)
+				.digest('base64');
 			const sign = encodeURIComponent(signBase64);
-			const url = credentials.webhookSign ? `${credentials.webhookUrl}&timestamp=${timestamp}&sign=${sign}` : credentials.webhookUrl as string
+			const url = credentials.webhookSign
+				? `${credentials.webhookUrl}&timestamp=${timestamp}&sign=${sign}`
+				: (credentials.webhookUrl as string);
 
-			const result = []
+			const result = [];
 			const items = this.getInputData();
 			let item: INodeExecutionData;
 
 			for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 				try {
 					item = items[itemIndex];
-					const msgtype = this.getNodeParameter('msgtype', itemIndex) as string
-					const content = this.getNodeParameter('content', itemIndex) as any
+					const msgtype = this.getNodeParameter('msgtype', itemIndex) as string;
+					const content = this.getNodeParameter('content', itemIndex) as any;
 
-					const data = { msgtype } as any
+					const data = { msgtype } as any;
 
 					if ('text' === msgtype || 'markdown' === msgtype) {
-						const atMobiles = this.getNodeParameter('atMobiles', itemIndex) as string[]
-						const atUserIds = this.getNodeParameter('atUserIds', itemIndex) as string[]
-						const isAtAll = this.getNodeParameter('isAtAll', itemIndex)
+						const atMobiles = this.getNodeParameter('atMobiles', itemIndex) as string[];
+						const atUserIds = this.getNodeParameter('atUserIds', itemIndex) as string[];
+						const isAtAll = this.getNodeParameter('isAtAll', itemIndex);
 						data.at = { isAtAll };
 						if (atMobiles && atMobiles.length > 0) {
-							data.at.atMobiles = atMobiles
+							data.at.atMobiles = atMobiles;
 						}
 						if (atUserIds && atUserIds.length > 0) {
-							data.at.atUserIds = atUserIds
+							data.at.atUserIds = atUserIds;
 						}
 
 						if ('text' === msgtype) {
 							data.text = { content };
 						} else if ('markdown' === msgtype) {
-							data.link = content
+							data.link = content;
 						}
 					} else if ('link' === msgtype) {
-						data.link = content
+						data.link = content;
 					} else if ('actionCard' === msgtype) {
-						data.actionCard = content
+						data.actionCard = content;
 					} else if ('feedCard' === msgtype) {
-						data.feedCard = content
+						data.feedCard = content;
 					}
 
 					// const res = await axios.post(`${url}&timestamp=${timestamp}&sign=${sign}`, data, {
 					const res = await axios.post(url, data, {
 						headers: {
-							'Content-Type': 'application/json'
-						}
-					})
-					result.push({ json: res.data })
+							'Content-Type': 'application/json',
+						},
+					});
+					result.push({ json: res.data });
 				} catch (error) {
 					if (this.continueOnFail()) {
-						result.push({ json: this.getInputData(itemIndex)[0].json, error, pairedItem: itemIndex });
+						result.push({
+							json: this.getInputData(itemIndex)[0].json,
+							error,
+							pairedItem: itemIndex,
+						});
 					} else {
 						if (error.context) {
 							error.context.itemIndex = itemIndex;
@@ -250,13 +256,15 @@ export class DingTalk implements INodeType {
 		}
 
 		// 创建客户端
-		const rbClient = new RobotClient(new OpenApi.Config({
-			endpoint: "your endpoint",
-			accessKeyId: "your access key id",
-			accessKeySecret: "your access key secret",
-			type: "access_key",
-			regionId: "cn-hangzhou"
-		}));
+		const rbClient = new RobotClient(
+			new OpenApi.Config({
+				endpoint: 'your endpoint',
+				accessKeyId: 'your access key id',
+				accessKeySecret: 'your access key secret',
+				type: 'access_key',
+				regionId: 'cn-hangzhou',
+			}),
+		);
 		// 初始化 runtimeObject
 		const runtimeObject = new Util.RuntimeOptions({});
 
@@ -269,11 +277,10 @@ export class DingTalk implements INodeType {
 		// (This could be a different value for each item in case it contains an expression)
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
-
 				item = items[itemIndex];
 
-				const req = new $RobotClient.SendRobotDingMessageRequest()
-				rbClient.sendRobotDingMessage(req)
+				const req = new $RobotClient.SendRobotDingMessageRequest();
+				rbClient.sendRobotDingMessage(req);
 				// rbClient.sendRobotDingMessageWithOptions(req, runtimeObject)
 
 				const binaryPropertyName = this.getNodeParameter('binaryPropertyName', itemIndex) as string;
@@ -281,7 +288,11 @@ export class DingTalk implements INodeType {
 					// Property did not get found on item
 					continue;
 				}
-				const binaryPropertyOutputName = this.getNodeParameter('binaryPropertyOutputName', itemIndex, binaryPropertyName) as string;
+				const binaryPropertyOutputName = this.getNodeParameter(
+					'binaryPropertyOutputName',
+					itemIndex,
+					binaryPropertyName,
+				) as string;
 				const inputEncoding = this.getNodeParameter('inputEncoding', itemIndex) as string;
 				const outputEncoding = this.getNodeParameter('outputEncoding', itemIndex) as string;
 				// const options: Options = {};

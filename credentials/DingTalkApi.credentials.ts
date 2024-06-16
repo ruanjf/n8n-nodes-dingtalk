@@ -1,9 +1,9 @@
 import { ICredentialType, INodeProperties } from 'n8n-workflow';
 
-export class DingTalk implements ICredentialType {
-	name = 'dingtalk';
-	displayName = 'Dingtalk';
-	documentationUrl = 'dingtalk';
+export class DingTalkApi implements ICredentialType {
+	name = 'dingTalkApi';
+	displayName = 'Dingtalk API';
+	// documentationUrl = 'dingtalk';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Type',

@@ -1,6 +1,4 @@
-import {
-	IExecuteFunctions
-} from 'n8n-core';
+import { IExecuteFunctions } from 'n8n-core';
 import {
 	INodeExecutionData,
 	INodeParameters,
@@ -12,7 +10,7 @@ import crypto from 'crypto';
 import axios from 'axios';
 
 import Util, * as $Util from '@alicloud/tea-util';
-import RobotClient, * as $RobotClient from "@alicloud/dingtalk/dist/robot_1_0/client";
+import RobotClient, * as $RobotClient from '@alicloud/dingtalk/dist/robot_1_0/client';
 import OpenApi, * as $OpenApi from '@alicloud/openapi-client';
 import AuthClient, * as $AuthClient from '@alicloud/dingtalk/dist/oauth2_1_0/client';
 import * as $tea from '@alicloud/tea-typescript';
@@ -33,7 +31,7 @@ export class DingTalkRobot implements INodeType {
 		outputs: ['main'],
 		credentials: [
 			{
-				name: 'dingTalkCustomRobot',
+				name: 'dingTalkCustomRobotApi',
 				required: true,
 				displayOptions: {
 					show: {
@@ -42,7 +40,7 @@ export class DingTalkRobot implements INodeType {
 				},
 			},
 			{
-				name: 'dingtalkCompany',
+				name: 'dingTalkCompanyApi',
 				required: true,
 				displayOptions: {
 					show: {
@@ -68,7 +66,7 @@ export class DingTalkRobot implements INodeType {
 					{
 						name: '企业内部开发机器人',
 						value: 'companyInternalRobot',
-						description: '企业内部开发机器人',
+						// description: '企业内部开发机器人',
 						action: '企业内部开发机器人',
 					},
 				],
@@ -81,7 +79,7 @@ export class DingTalkRobot implements INodeType {
 				default: false,
 				required: true,
 				placeholder: 'JSON格式数据模式下自行构建数据结构',
-				description: '是否使用JSON格式数据模式',
+				// description: '是否使用JSON格式数据模式',
 				displayOptions: {
 					show: {
 						type: ['customRobot', 'companyInternalRobot'],
@@ -94,7 +92,7 @@ export class DingTalkRobot implements INodeType {
 				type: 'json',
 				default: '',
 				required: true,
-				description: '数据内容',
+				// description: '数据内容',
 				displayOptions: {
 					show: {
 						type: ['customRobot', 'companyInternalRobot'],
@@ -106,7 +104,7 @@ export class DingTalkRobot implements INodeType {
 				displayName: '用户集合',
 				name: 'userIds',
 				required: true,
-				description: '用户集合',
+				// description: '用户集合',
 				placeholder: '添加用户',
 				type: 'fixedCollection',
 				typeOptions: {
@@ -115,7 +113,7 @@ export class DingTalkRobot implements INodeType {
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
-						enableJsonMode: [false]
+						enableJsonMode: [false],
 					},
 				},
 				default: {},
@@ -129,7 +127,7 @@ export class DingTalkRobot implements INodeType {
 								name: 'mobile',
 								type: 'number',
 								default: '',
-								description: '用户电话',
+								// description: '用户电话',
 							},
 						],
 					},
@@ -141,31 +139,6 @@ export class DingTalkRobot implements INodeType {
 				type: 'options',
 				required: true,
 				options: [
-					{
-						name: 'sampleText类型',
-						value: 'sampleText',
-						description: 'sampleText类型',
-					},
-					{
-						name: 'sampleMarkdown类型',
-						value: 'sampleMarkdown',
-						description: 'sampleMarkdown类型',
-					},
-					{
-						name: 'sampleImageMsg类型',
-						value: 'sampleImageMsg',
-						description: 'sampleImageMsg类型',
-					},
-					{
-						name: 'sampleLink类型',
-						value: 'sampleLink',
-						description: 'sampleLink类型',
-					},
-					{
-						name: 'sampleActionCard类型',
-						value: 'sampleActionCard',
-						description: '单按钮类型',
-					},
 					{
 						name: 'sampleActionCard2类型',
 						value: 'sampleActionCard2',
@@ -191,6 +164,27 @@ export class DingTalkRobot implements INodeType {
 						value: 'sampleActionCard6',
 						description: '横向两个个按钮类型',
 					},
+					{
+						name: 'sampleActionCard类型',
+						value: 'sampleActionCard',
+						description: '单按钮类型',
+					},
+					{
+						name: 'sampleImageMsg类型',
+						value: 'sampleImageMsg',
+					},
+					{
+						name: 'sampleLink类型',
+						value: 'sampleLink',
+					},
+					{
+						name: 'sampleMarkdown类型',
+						value: 'sampleMarkdown',
+					},
+					{
+						name: 'sampleText类型',
+						value: 'sampleText',
+					},
 				],
 				default: 'sampleText',
 				displayOptions: {
@@ -207,29 +201,24 @@ export class DingTalkRobot implements INodeType {
 				required: true,
 				options: [
 					{
-						name: 'text类型',
-						value: 'text',
-						description: 'text类型',
-					},
-					{
-						name: 'link类型',
-						value: 'link',
-						description: 'link类型',
-					},
-					{
-						name: 'markdown类型',
-						value: 'markdown',
-						description: 'markdown类型',
-					},
-					{
 						name: 'ActionCard类型',
 						value: 'actionCard',
-						description: 'ActionCard类型',
 					},
 					{
 						name: 'FeedCard类型',
 						value: 'feedCard',
-						description: 'FeedCard类型',
+					},
+					{
+						name: 'Link类型',
+						value: 'link',
+					},
+					{
+						name: 'Markdown类型',
+						value: 'markdown',
+					},
+					{
+						name: 'Text类型',
+						value: 'text',
 					},
 				],
 				default: 'text',
@@ -245,9 +234,7 @@ export class DingTalkRobot implements INodeType {
 				name: 'isAtAll',
 				type: 'boolean',
 				default: false,
-				required: false,
 				placeholder: '',
-				description: '是否@所有人',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -261,7 +248,6 @@ export class DingTalkRobot implements INodeType {
 				name: 'atMobiles',
 				type: 'string',
 				default: '',
-				required: false,
 				description: '被@人的手机号，多个用,隔开',
 				displayOptions: {
 					show: {
@@ -273,11 +259,10 @@ export class DingTalkRobot implements INodeType {
 				},
 			},
 			{
-				displayName: '被@人的用户userid',
+				displayName: '被@人的用户Userid',
 				name: 'atUserIds',
 				type: 'string',
 				default: '',
-				required: false,
 				description: '被@人的用户userid，多个用,隔开',
 				displayOptions: {
 					show: {
@@ -295,7 +280,6 @@ export class DingTalkRobot implements INodeType {
 				default: '',
 				required: true,
 				placeholder: '',
-				description: '消息内容',
 				typeOptions: {
 					rows: 5,
 				},
@@ -303,7 +287,7 @@ export class DingTalkRobot implements INodeType {
 					show: {
 						enableJsonMode: [false],
 						type: ['customRobot'],
-						msgtype: ['text']
+						msgtype: ['text'],
 					},
 				},
 			},
@@ -314,7 +298,6 @@ export class DingTalkRobot implements INodeType {
 				default: '',
 				required: true,
 				placeholder: '',
-				description: '消息内容',
 				typeOptions: {
 					rows: 5,
 				},
@@ -322,7 +305,7 @@ export class DingTalkRobot implements INodeType {
 					show: {
 						enableJsonMode: [false],
 						type: ['companyInternalRobot'],
-						msgKey: ['sampleText']
+						msgKey: ['sampleText'],
 					},
 				},
 			},
@@ -342,12 +325,11 @@ export class DingTalkRobot implements INodeType {
 				},
 			},
 			{
-				displayName: 'markdown格式的消息',
+				displayName: 'Markdown格式的消息',
 				name: 'markdownText',
 				type: 'string',
 				default: '',
 				required: true,
-				description: 'markdown格式的消息。',
 				placeholder: '',
 				typeOptions: {
 					rows: 5,
@@ -366,12 +348,11 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '消息标题',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
 						enableJsonMode: [false],
-						msgtype: ['link']
+						msgtype: ['link'],
 					},
 				},
 			},
@@ -381,13 +362,20 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '消息标题',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleMarkdown','sampleLink','sampleActionCard','sampleActionCard2',
-							'sampleActionCard3','sampleActionCard4','sampleActionCard5','sampleActionCard6']
+						msgKey: [
+							'sampleMarkdown',
+							'sampleLink',
+							'sampleActionCard',
+							'sampleActionCard2',
+							'sampleActionCard3',
+							'sampleActionCard4',
+							'sampleActionCard5',
+							'sampleActionCard6',
+						],
 					},
 				},
 			},
@@ -398,7 +386,6 @@ export class DingTalkRobot implements INodeType {
 				default: true,
 				required: true,
 				placeholder: '',
-				description: '是否单个按钮',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -413,7 +400,6 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '单个按钮的标题',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -429,7 +415,8 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '点击消息跳转的URL，打开方式如下：\n移动端，在钉钉客户端内打开\nPC端 默认侧边栏打开、希望在外部浏览器打开',
+				description:
+					'点击消息跳转的URL，打开方式如下：\n移动端，在钉钉客户端内打开\nPC端 默认侧边栏打开、希望在外部浏览器打开',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -445,12 +432,13 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '点击消息跳转的URL，打开方式如下：\n移动端，在钉钉客户端内打开\nPC端 默认侧边栏打开、希望在外部浏览器打开',
+				description:
+					'点击消息跳转的URL，打开方式如下：\n移动端，在钉钉客户端内打开\nPC端 默认侧边栏打开、希望在外部浏览器打开',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard']
+						msgKey: ['sampleActionCard'],
 					},
 				},
 			},
@@ -460,12 +448,11 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '单个按钮的标题',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard']
+						msgKey: ['sampleActionCard'],
 					},
 				},
 			},
@@ -475,7 +462,8 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '点击消息跳转的URL，打开方式如下：\n移动端，在钉钉客户端内打开\nPC端 默认侧边栏打开、希望在外部浏览器打开',
+				description:
+					'点击消息跳转的URL，打开方式如下：\n移动端，在钉钉客户端内打开\nPC端 默认侧边栏打开、希望在外部浏览器打开',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
@@ -490,7 +478,8 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '点击消息跳转的URL，打开方式如下：\n移动端，在钉钉客户端内打开\nPC端 默认侧边栏打开、希望在外部浏览器打开',
+				description:
+					'点击消息跳转的URL，打开方式如下：\n移动端，在钉钉客户端内打开\nPC端 默认侧边栏打开、希望在外部浏览器打开',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -504,8 +493,6 @@ export class DingTalkRobot implements INodeType {
 				name: 'picUrl',
 				type: 'string',
 				default: '',
-				required: false,
-				description: '图片URL',
 				displayOptions: {
 					show: {
 						type: ['customRobot'],
@@ -519,13 +506,11 @@ export class DingTalkRobot implements INodeType {
 				name: 'picUrl',
 				type: 'string',
 				default: '',
-				required: false,
-				description: '图片URL',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleLink']
+						msgKey: ['sampleLink'],
 					},
 				},
 			},
@@ -534,8 +519,6 @@ export class DingTalkRobot implements INodeType {
 				name: 'photoURL',
 				type: 'string',
 				default: '',
-				required: false,
-				description: '图片URL',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
@@ -578,8 +561,16 @@ export class DingTalkRobot implements INodeType {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleMarkdown','sampleLink','sampleActionCard','sampleActionCard2',
-							'sampleActionCard3','sampleActionCard4','sampleActionCard5','sampleActionCard6']
+						msgKey: [
+							'sampleMarkdown',
+							'sampleLink',
+							'sampleActionCard',
+							'sampleActionCard2',
+							'sampleActionCard3',
+							'sampleActionCard4',
+							'sampleActionCard5',
+							'sampleActionCard6',
+						],
 					},
 				},
 			},
@@ -589,12 +580,16 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '按钮1标题',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard2','sampleActionCard3','sampleActionCard4','sampleActionCard5']
+						msgKey: [
+							'sampleActionCard2',
+							'sampleActionCard3',
+							'sampleActionCard4',
+							'sampleActionCard5',
+						],
 					},
 				},
 			},
@@ -604,12 +599,16 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '按钮2标题',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard2','sampleActionCard3','sampleActionCard4','sampleActionCard5']
+						msgKey: [
+							'sampleActionCard2',
+							'sampleActionCard3',
+							'sampleActionCard4',
+							'sampleActionCard5',
+						],
 					},
 				},
 			},
@@ -619,12 +618,11 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '按钮3标题',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard3','sampleActionCard4','sampleActionCard5']
+						msgKey: ['sampleActionCard3', 'sampleActionCard4', 'sampleActionCard5'],
 					},
 				},
 			},
@@ -634,12 +632,11 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '按钮4标题',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard4','sampleActionCard5']
+						msgKey: ['sampleActionCard4', 'sampleActionCard5'],
 					},
 				},
 			},
@@ -649,12 +646,11 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '按钮5标题',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard5']
+						msgKey: ['sampleActionCard5'],
 					},
 				},
 			},
@@ -664,13 +660,17 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '按钮1链接',
 				placeholder: '',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard2','sampleActionCard3','sampleActionCard4','sampleActionCard5']
+						msgKey: [
+							'sampleActionCard2',
+							'sampleActionCard3',
+							'sampleActionCard4',
+							'sampleActionCard5',
+						],
 					},
 				},
 			},
@@ -680,12 +680,16 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '按钮2链接',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard2','sampleActionCard3','sampleActionCard4','sampleActionCard5']
+						msgKey: [
+							'sampleActionCard2',
+							'sampleActionCard3',
+							'sampleActionCard4',
+							'sampleActionCard5',
+						],
 					},
 				},
 			},
@@ -695,12 +699,11 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '按钮3链接',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard3','sampleActionCard4','sampleActionCard5']
+						msgKey: ['sampleActionCard3', 'sampleActionCard4', 'sampleActionCard5'],
 					},
 				},
 			},
@@ -710,12 +713,11 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '按钮4链接',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard4','sampleActionCard5']
+						msgKey: ['sampleActionCard4', 'sampleActionCard5'],
 					},
 				},
 			},
@@ -725,12 +727,11 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '按钮5链接',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard5']
+						msgKey: ['sampleActionCard5'],
 					},
 				},
 			},
@@ -740,12 +741,11 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '横向按钮1标题',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard6']
+						msgKey: ['sampleActionCard6'],
 					},
 				},
 			},
@@ -755,12 +755,11 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '横向按钮2标题',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard6']
+						msgKey: ['sampleActionCard6'],
 					},
 				},
 			},
@@ -770,12 +769,11 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '横向按钮2跳转链接',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard6']
+						msgKey: ['sampleActionCard6'],
 					},
 				},
 			},
@@ -785,19 +783,17 @@ export class DingTalkRobot implements INodeType {
 				type: 'string',
 				default: '',
 				required: true,
-				description: '横向按钮1跳转链接',
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
 						enableJsonMode: [false],
-						msgKey: ['sampleActionCard6']
+						msgKey: ['sampleActionCard6'],
 					},
 				},
 			},
 			{
 				displayName: '按钮集合',
 				name: 'btns',
-				description: '按钮集合',
 				placeholder: '添加按钮',
 				required: true,
 				type: 'fixedCollection',
@@ -841,8 +837,6 @@ export class DingTalkRobot implements INodeType {
 				name: 'btnOrientation',
 				type: 'options',
 				default: '0',
-				required: false,
-				description: '排列方式',
 				options: [
 					{
 						name: '按钮竖直排列',
@@ -865,7 +859,6 @@ export class DingTalkRobot implements INodeType {
 				displayName: '链接集合',
 				name: 'lks',
 				required: true,
-				description: '链接集合',
 				placeholder: '添加链接',
 				type: 'fixedCollection',
 				typeOptions: {
@@ -909,99 +902,109 @@ export class DingTalkRobot implements INodeType {
 					},
 				],
 			},
-
 		],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		const type = this.getNodeParameter('type', 0)
+		const type = this.getNodeParameter('type', 0);
 		const items = this.getInputData();
 		if (type === 'customRobot') {
-			const credentials = await this.getCredentials('dingTalkCustomRobot');
+			const credentials = await this.getCredentials('dingTalkCustomRobotApi');
 
 			const timestamp = Date.parse(new Date().toString());
 			const stringToSign = `${timestamp}\n${credentials.webhookSign}`;
-			const signBase64 = crypto.createHmac('sha256', credentials.webhookSign as string).update(stringToSign).digest("base64");
+			const signBase64 = crypto
+				.createHmac('sha256', credentials.webhookSign as string)
+				.update(stringToSign)
+				.digest('base64');
 			const sign = encodeURIComponent(signBase64);
-			const url = credentials.webhookSign ? `${credentials.webhookUrl}&timestamp=${timestamp}&sign=${sign}` : credentials.webhookUrl as string
-			const result = []
+			const url = credentials.webhookSign
+				? `${credentials.webhookUrl}&timestamp=${timestamp}&sign=${sign}`
+				: (credentials.webhookUrl as string);
+			const result = [];
 
 			for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 				try {
 					// let item = items[itemIndex] as INodeExecutionData;
-					const enableJsonMode = this.getNodeParameter('enableJsonMode', itemIndex) as boolean
-					const msgtype = enableJsonMode ? null : this.getNodeParameter('msgtype', itemIndex) as string
-					const data = { msgtype } as any
+					const enableJsonMode = this.getNodeParameter('enableJsonMode', itemIndex) as boolean;
+					const msgtype = enableJsonMode
+						? null
+						: (this.getNodeParameter('msgtype', itemIndex) as string);
+					const data = { msgtype } as any;
 
 					if (enableJsonMode) {
-						const json = this.getNodeParameter('json', itemIndex) as object
-						Object.assign(data, json)
-
+						const json = this.getNodeParameter('json', itemIndex) as object;
+						Object.assign(data, json);
 					} else if ('text' === msgtype || 'markdown' === msgtype) {
-						const isAtAll = this.getNodeParameter('isAtAll', itemIndex)
-						const atMobiles = isAtAll ? null : (this.getNodeParameter('atMobiles', itemIndex) as string)?.split(",")
-						const atUserIds = isAtAll ? null : (this.getNodeParameter('atUserIds', itemIndex) as string)?.split(",")
+						const isAtAll = this.getNodeParameter('isAtAll', itemIndex);
+						const atMobiles = isAtAll
+							? null
+							: (this.getNodeParameter('atMobiles', itemIndex) as string)?.split(',');
+						const atUserIds = isAtAll
+							? null
+							: (this.getNodeParameter('atUserIds', itemIndex) as string)?.split(',');
 						data.at = { isAtAll };
 						if (atMobiles && atMobiles.length > 0) {
-							data.at.atMobiles = atMobiles
+							data.at.atMobiles = atMobiles;
 						}
 						if (atUserIds && atUserIds.length > 0) {
-							data.at.atUserIds = atUserIds
+							data.at.atUserIds = atUserIds;
 						}
 
 						if ('text' === msgtype) {
 							data.text = {
-								"content": this.getNodeParameter('content', itemIndex),
-							}
+								content: this.getNodeParameter('content', itemIndex),
+							};
 						} else if ('markdown' === msgtype) {
 							data.markdown = {
-								"title": this.getNodeParameter('title', itemIndex),
-								"text": this.getNodeParameter('markdownText', itemIndex),
-							}
+								title: this.getNodeParameter('title', itemIndex),
+								text: this.getNodeParameter('markdownText', itemIndex),
+							};
 						}
-
 					} else if ('link' === msgtype) {
 						data.link = {
-							"text": this.getNodeParameter('text', itemIndex),
-							"title": this.getNodeParameter('title', itemIndex),
-							"picUrl": this.getNodeParameter('picUrl', itemIndex) || "",
-							"messageUrl": this.getNodeParameter('url', itemIndex),
-						}
-
+							text: this.getNodeParameter('text', itemIndex),
+							title: this.getNodeParameter('title', itemIndex),
+							picUrl: this.getNodeParameter('picUrl', itemIndex) || '',
+							messageUrl: this.getNodeParameter('url', itemIndex),
+						};
 					} else if ('actionCard' === msgtype) {
 						data.actionCard = {
-							"title": this.getNodeParameter('title', itemIndex),
-							"text": this.getNodeParameter('markdownText', itemIndex),
-						}
-						const btnOrientation = this.getNodeParameter('btnOrientation', itemIndex)
+							title: this.getNodeParameter('title', itemIndex),
+							text: this.getNodeParameter('markdownText', itemIndex),
+						};
+						const btnOrientation = this.getNodeParameter('btnOrientation', itemIndex);
 						if (btnOrientation) {
-							data.actionCard.btnOrientation = btnOrientation
+							data.actionCard.btnOrientation = btnOrientation;
 						}
-						const isSingleButton = this.getNodeParameter('isSingleButton', itemIndex) as boolean
+						const isSingleButton = this.getNodeParameter('isSingleButton', itemIndex) as boolean;
 						if (isSingleButton) {
-							data.actionCard.singleTitle = this.getNodeParameter('singleTitle', itemIndex)
-							data.actionCard.singleURL = this.getNodeParameter('singleURL', itemIndex)
+							data.actionCard.singleTitle = this.getNodeParameter('singleTitle', itemIndex);
+							data.actionCard.singleURL = this.getNodeParameter('singleURL', itemIndex);
 						} else {
-							const btns = this.getNodeParameter('btns', itemIndex) as INodeParameters
-							data.actionCard.btns = btns.buttons
+							const btns = this.getNodeParameter('btns', itemIndex) as INodeParameters;
+							data.actionCard.btns = btns.buttons;
 						}
-
 					} else if ('feedCard' === msgtype) {
-						const lks = this.getNodeParameter('lks', itemIndex) as INodeParameters
+						const lks = this.getNodeParameter('lks', itemIndex) as INodeParameters;
 						data.feedCard = {
-							links: lks.links
-						}
+							links: lks.links,
+						};
 					}
 					console.log(data);
 					const res = await axios.post(url, data, {
 						headers: {
-							'Content-Type': 'application/json'
-						}
-					})
-					result.push({ json: res.data })
+							'Content-Type': 'application/json',
+						},
+					});
+					result.push({ json: res.data });
 				} catch (error) {
 					if (this.continueOnFail()) {
-						result.push({ json: this.getInputData(itemIndex)[0].json, error, pairedItem: itemIndex });
+						result.push({
+							json: this.getInputData(itemIndex)[0].json,
+							error,
+							pairedItem: itemIndex,
+						});
 					} else {
 						if (error.context) {
 							error.context.itemIndex = itemIndex;
@@ -1016,7 +1019,7 @@ export class DingTalkRobot implements INodeType {
 
 			return this.prepareOutputData(result);
 		} else if (type === 'companyInternalRobot') {
-			const credentials = await this.getCredentials('dingtalkCompany');
+			const credentials = await this.getCredentials('dingtalkCompanyApi');
 			const config = new $OpenApi.Config({});
 			config.protocol = credentials.protocol as string;
 			config.regionId = credentials.regionId as string;
@@ -1032,73 +1035,92 @@ export class DingTalkRobot implements INodeType {
 			if (!token) {
 				throw new NodeOperationError(this.getNode(), 'get token fail');
 			}
-			const getUserIdByMobileUrl = "https://oapi.dingtalk.com/topapi/v2/user/getbymobile?access_token="+token
-			const result = []
+			const getUserIdByMobileUrl =
+				'https://oapi.dingtalk.com/topapi/v2/user/getbymobile?access_token=' + token;
+			const result = [];
 			const robotCode = credentials.robotCode as string;
 			for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 				try {
-					const enableJsonMode = this.getNodeParameter('enableJsonMode', itemIndex) as boolean
-					const msgKey = enableJsonMode ? null : this.getNodeParameter('msgKey', itemIndex) as string
-					const data = {} as any
+					const enableJsonMode = this.getNodeParameter('enableJsonMode', itemIndex) as boolean;
+					const msgKey = enableJsonMode
+						? null
+						: (this.getNodeParameter('msgKey', itemIndex) as string);
+					const data = {} as any;
 					batchSendOTOHeaders.xAcsDingtalkAccessToken = token;
 					if (enableJsonMode) {
-						const json = JSON.parse(this.getNodeParameter('json', itemIndex) as string)
-						Object.assign(data, json)
+						const json = JSON.parse(this.getNodeParameter('json', itemIndex) as string);
+						Object.assign(data, json);
 						const batchSendOTORequest = new $RobotClient.BatchSendOTORequest(data);
-						await robotClient.batchSendOTOWithOptions(batchSendOTORequest, batchSendOTOHeaders, new $Util.RuntimeOptions({}));
-					}else {
+						await robotClient.batchSendOTOWithOptions(
+							batchSendOTORequest,
+							batchSendOTOHeaders,
+							new $Util.RuntimeOptions({}),
+						);
+					} else {
 						const nodeParameters = JSON.parse(JSON.stringify(this.getNode().parameters));
-						const userIds:{"users":[]} = nodeParameters?.userIds;
+						const userIds: { users: [] } = nodeParameters?.userIds;
 						const userIdList: string[] = [];
 						let failUser = [];
-						for (let i = 0; i < userIds.users.length; i++){
-							const user: { "mobile": any; } = userIds.users[i];
+						for (let i = 0; i < userIds.users.length; i++) {
+							const user: { mobile: any } = userIds.users[i];
 							const mobile = user.mobile;
-							const res = await axios.post(getUserIdByMobileUrl, {'mobile':mobile}, {
-								headers: {
-									'Content-Type': 'application/json'
-								}
-							})
-							if(res?.data?.errcode !== 0){
+							const res = await axios.post(
+								getUserIdByMobileUrl,
+								{ mobile: mobile },
+								{
+									headers: {
+										'Content-Type': 'application/json',
+									},
+								},
+							);
+							if (res?.data?.errcode !== 0) {
 								failUser.push(mobile);
-							}else {
+							} else {
 								userIdList.push(res?.data?.result?.userid);
 							}
-
 						}
-						if(failUser && failUser.length > 0){
-							result.push({ json:{'failUser': failUser} })
+						if (failUser && failUser.length > 0) {
+							result.push({ json: { failUser: failUser } });
 						}
-						if(!userIdList || userIdList.length === 0){
+						if (!userIdList || userIdList.length === 0) {
 							return this.prepareOutputData(result);
 						}
 
-						delete nodeParameters.type
-						delete nodeParameters.enableJsonMode
-						delete nodeParameters.userIds
-						delete nodeParameters.msgKey
+						delete nodeParameters.type;
+						delete nodeParameters.enableJsonMode;
+						delete nodeParameters.userIds;
+						delete nodeParameters.msgKey;
 						let sendMsgParams = {};
 						// tslint:disable-next-line:forin
 						for (const nodeParametersKey in nodeParameters) {
 							// @ts-ignore
-							sendMsgParams[nodeParametersKey] = this.getNodeParameter(nodeParametersKey, itemIndex)
+							sendMsgParams[nodeParametersKey] = this.getNodeParameter(
+								nodeParametersKey,
+								itemIndex,
+							);
 						}
 						let sendParams = {
-							"robotCode": robotCode,
-							"msgKey": msgKey,
-							"userIds": userIdList,
-							"msgParam": JSON.stringify(sendMsgParams).replace(/\\\\/g,"\\")
-						}
+							robotCode: robotCode,
+							msgKey: msgKey,
+							userIds: userIdList,
+							msgParam: JSON.stringify(sendMsgParams).replace(/\\\\/g, '\\'),
+						};
 						//console.log(sendParams);
 						const batchSendOTORequest = new $RobotClient.BatchSendOTORequest(sendParams);
-						const sendRes = await robotClient.batchSendOTOWithOptions(batchSendOTORequest, batchSendOTOHeaders, new $Util.RuntimeOptions({}));
-						result.push({ json: sendRes.body })
+						const sendRes = await robotClient.batchSendOTOWithOptions(
+							batchSendOTORequest,
+							batchSendOTOHeaders,
+							new $Util.RuntimeOptions({}),
+						);
+						result.push({ json: sendRes.body });
 					}
-
-
 				} catch (error) {
 					if (this.continueOnFail()) {
-						result.push({ json: this.getInputData(itemIndex)[0].json, error, pairedItem: itemIndex });
+						result.push({
+							json: this.getInputData(itemIndex)[0].json,
+							error,
+							pairedItem: itemIndex,
+						});
 					} else {
 						if (error.context) {
 							error.context.itemIndex = itemIndex;
@@ -1134,7 +1156,6 @@ export class DingTalkRobot implements INodeType {
 		// }));
 		// // 初始化 runtimeObject
 		// const runtimeObject = new Util.RuntimeOptions({});
-
 
 		return this.prepareOutputData([]);
 	}

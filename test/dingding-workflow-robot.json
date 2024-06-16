@@ -41,7 +41,7 @@
         800
       ],
       "credentials": {
-        "dingTalkCustomRobot": {
+        "dingTalkCustomRobotApi": {
           "id": "4",
           "name": "DingTalkCustomRobot account 2"
         }
@@ -63,7 +63,7 @@
         800
       ],
       "credentials": {
-        "dingTalkCustomRobot": {
+        "dingTalkCustomRobotApi": {
           "id": "4",
           "name": "DingTalkCustomRobot account 2"
         }
@@ -84,7 +84,7 @@
         800
       ],
       "credentials": {
-        "dingTalkCustomRobot": {
+        "dingTalkCustomRobotApi": {
           "id": "4",
           "name": "DingTalkCustomRobot account 2"
         }
@@ -108,7 +108,7 @@
         980
       ],
       "credentials": {
-        "dingTalkCustomRobot": {
+        "dingTalkCustomRobotApi": {
           "id": "4",
           "name": "DingTalkCustomRobot account 2"
         }
@@ -143,7 +143,7 @@
         980
       ],
       "credentials": {
-        "dingTalkCustomRobot": {
+        "dingTalkCustomRobotApi": {
           "id": "4",
           "name": "DingTalkCustomRobot account 2"
         }
@@ -176,7 +176,7 @@
         980
       ],
       "credentials": {
-        "dingTalkCustomRobot": {
+        "dingTalkCustomRobotApi": {
           "id": "4",
           "name": "DingTalkCustomRobot account 2"
         }
@@ -196,7 +196,7 @@
         640
       ],
       "credentials": {
-        "dingTalkCustomRobot": {
+        "dingTalkCustomRobotApi": {
           "id": "4",
           "name": "DingTalkCustomRobot account 2"
         }

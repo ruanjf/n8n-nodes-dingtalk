@@ -1019,7 +1019,7 @@ export class DingTalkRobot implements INodeType {
 
 			return this.prepareOutputData(result);
 		} else if (type === 'companyInternalRobot') {
-			const credentials = await this.getCredentials('dingtalkCompanyApi');
+			const credentials = await this.getCredentials('dingTalkCompanyApi');
 			const config = new $OpenApi.Config({});
 			config.protocol = credentials.protocol as string;
 			config.regionId = credentials.regionId as string;

@@ -15,7 +15,9 @@ import OpenApi, * as $OpenApi from '@alicloud/openapi-client';
 import AuthClient, * as $AuthClient from '@alicloud/dingtalk/dist/oauth2_1_0/client';
 import * as $tea from '@alicloud/tea-typescript';
 import FormData from 'form-data';
-import fs from 'fs'
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
 
 export class DingTalkRobot implements INodeType {
 	description: INodeTypeDescription = {
@@ -1156,7 +1158,15 @@ export class DingTalkRobot implements INodeType {
 							const uploadMediaUrl = 'https://oapi.dingtalk.com/media/upload?access_token=' + token;
 
 							const formData = new FormData();
-							formData.append('media', fs.createReadStream(`${binaryData.directory}/${binaryData.fileName}`));
+							let filePath = null;
+							if (binaryData.directory && binaryData.fileName) {
+								filePath = `${binaryData.directory}/${binaryData.fileName}`;
+							} else {
+								const randomName = crypto.randomBytes(16).toString('hex');
+								filePath = path.join(os.tmpdir(), randomName);
+								fs.writeFileSync(filePath, Buffer.from(binaryData.data, 'base64'));
+							}
+							formData.append('media', fs.createReadStream(filePath));
 							formData.append('type', 'file');
 								const response = await axios.post(uploadMediaUrl, formData, {
 								headers: {

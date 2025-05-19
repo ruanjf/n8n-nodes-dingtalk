@@ -1,5 +1,6 @@
 import { IExecuteFunctions } from 'n8n-core';
 import {
+	IBinaryData,
 	INodeExecutionData,
 	INodeParameters,
 	INodeType,
@@ -8,12 +9,13 @@ import {
 } from 'n8n-workflow';
 import crypto from 'crypto';
 import axios from 'axios';
-
 import Util, * as $Util from '@alicloud/tea-util';
 import RobotClient, * as $RobotClient from '@alicloud/dingtalk/dist/robot_1_0/client';
 import OpenApi, * as $OpenApi from '@alicloud/openapi-client';
 import AuthClient, * as $AuthClient from '@alicloud/dingtalk/dist/oauth2_1_0/client';
 import * as $tea from '@alicloud/tea-typescript';
+import FormData from 'form-data';
+import fs from 'fs'
 
 export class DingTalkRobot implements INodeType {
 	description: INodeTypeDescription = {
@@ -185,6 +187,10 @@ export class DingTalkRobot implements INodeType {
 						name: 'sampleText类型',
 						value: 'sampleText',
 					},
+					{
+						name: 'sampleFile文件类型',
+						value: 'sampleFile',
+					}
 				],
 				default: 'sampleText',
 				displayOptions: {
@@ -902,6 +908,50 @@ export class DingTalkRobot implements INodeType {
 					},
 				],
 			},
+			{
+				displayName: '文件名称',
+				name: 'fileName',
+				type: 'string',
+				default: '表格.xlsx',
+				required: true,
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleFile'],
+					}
+				}
+			},
+			{
+				displayName: '文件类型',
+				name: 'fileType',
+				type: 'string',
+				default: 'xlsx',
+				required: true,
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleFile'],
+					}
+				},
+				hint: '文件类型，支持xlsx、pdf、zip、rar、doc、docx格式。',
+			},
+			{
+				displayName: 'Input Binary Field',
+				name: 'binaryPropertyName',
+				type: 'string',
+				default: 'data',
+				required: true,
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleFile'],
+					}
+				},
+				hint: 'The name of the input binary field containing the file to be uploaded',
+			},
 		],
 	};
 
@@ -1090,7 +1140,7 @@ export class DingTalkRobot implements INodeType {
 						delete nodeParameters.enableJsonMode;
 						delete nodeParameters.userIds;
 						delete nodeParameters.msgKey;
-						let sendMsgParams = {};
+						let sendMsgParams = {} as Record<string, any>;
 						// tslint:disable-next-line:forin
 						for (const nodeParametersKey in nodeParameters) {
 							// @ts-ignore
@@ -1099,13 +1149,29 @@ export class DingTalkRobot implements INodeType {
 								itemIndex,
 							);
 						}
+						if (msgKey == 'sampleFile') {
+							const binaryPropertyName = sendMsgParams.binaryPropertyName;
+							// @ts-ignorex
+							const binaryData = this.helpers.assertBinaryData(itemIndex, binaryPropertyName) as IBinaryData;
+							const uploadMediaUrl = 'https://oapi.dingtalk.com/media/upload?access_token=' + token;
+
+							const formData = new FormData();
+							formData.append('media', fs.createReadStream(`${binaryData.directory}/${binaryData.fileName}`));
+							formData.append('type', 'file');
+								const response = await axios.post(uploadMediaUrl, formData, {
+								headers: {
+									...formData.getHeaders()
+								},
+							});
+							sendMsgParams.mediaId = response.data.media_id;
+						}
 						let sendParams = {
 							robotCode: robotCode,
 							msgKey: msgKey,
 							userIds: userIdList,
 							msgParam: JSON.stringify(sendMsgParams).replace(/\\\\/g, '\\'),
 						};
-						//console.log(sendParams);
+						// console.log(sendParams);
 						const batchSendOTORequest = new $RobotClient.BatchSendOTORequest(sendParams);
 						const sendRes = await robotClient.batchSendOTOWithOptions(
 							batchSendOTORequest,
@@ -1131,7 +1197,7 @@ export class DingTalkRobot implements INodeType {
 						});
 					}
 				}
-				return this.prepareOutputData(result);
+				return this.prepareOutputData(result as any);
 			}
 
 			return this.prepareOutputData([]);
@@ -1159,4 +1225,5 @@ export class DingTalkRobot implements INodeType {
 
 		return this.prepareOutputData([]);
 	}
+
 }

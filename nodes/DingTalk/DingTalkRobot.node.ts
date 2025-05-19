@@ -914,22 +914,8 @@ export class DingTalkRobot implements INodeType {
 				displayName: '文件名称',
 				name: 'fileName',
 				type: 'string',
-				default: '表格.xlsx',
-				required: true,
-				displayOptions: {
-					show: {
-						type: ['companyInternalRobot'],
-						enableJsonMode: [false],
-						msgKey: ['sampleFile'],
-					}
-				}
-			},
-			{
-				displayName: '文件类型',
-				name: 'fileType',
-				type: 'string',
-				default: 'xlsx',
-				required: true,
+				default: '',
+				required: false,
 				displayOptions: {
 					show: {
 						type: ['companyInternalRobot'],
@@ -937,7 +923,22 @@ export class DingTalkRobot implements INodeType {
 						msgKey: ['sampleFile'],
 					}
 				},
-				hint: '文件类型，支持xlsx、pdf、zip、rar、doc、docx格式。',
+				hint: '要在钉钉消息中显示的文件名称。不填写则自动使用上一节点的文件名称。',
+			},
+			{
+				displayName: '文件类型',
+				name: 'fileType',
+				type: 'string',
+				default: '',
+				required: false,
+				displayOptions: {
+					show: {
+						type: ['companyInternalRobot'],
+						enableJsonMode: [false],
+						msgKey: ['sampleFile'],
+					}
+				},
+				hint: '文件类型，支持xlsx、pdf、zip、rar、doc、docx格式。不填写则自动使用上一节点的文件类型。',
 			},
 			{
 				displayName: 'Input Binary Field',
@@ -1155,6 +1156,13 @@ export class DingTalkRobot implements INodeType {
 							const binaryPropertyName = sendMsgParams.binaryPropertyName;
 							// @ts-ignorex
 							const binaryData = this.helpers.assertBinaryData(itemIndex, binaryPropertyName) as IBinaryData;
+							// 处理默认字段
+							if (!sendMsgParams.fileName) {
+								sendMsgParams.fileName = binaryData.fileName
+							}
+							if (!sendMsgParams.fileType) {
+								sendMsgParams.fileType = binaryData.fileExtension
+							}
 							const uploadMediaUrl = 'https://oapi.dingtalk.com/media/upload?access_token=' + token;
 
 							const formData = new FormData();

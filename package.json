@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-dingtalk",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "keywords": [
     "n8n-community-node-package",
@@ -53,6 +53,6 @@
     "typescript": "~4.6.0"
   },
   "dependencies": {
-    "@alicloud/dingtalk": "^1.4.13"
+    "@alicloud/dingtalk": "^2.2.11"
   }
 }

@@ -13,7 +13,7 @@ import Util, * as $Util from '@alicloud/tea-util';
 import RobotClient, * as $RobotClient from '@alicloud/dingtalk/dist/robot_1_0/client';
 import OpenApi, * as $OpenApi from '@alicloud/openapi-client';
 import AuthClient, * as $AuthClient from '@alicloud/dingtalk/dist/oauth2_1_0/client';
-import * as $tea from '@alicloud/tea-typescript';
+// import * as $tea from '@alicloud/tea-typescript';
 import FormData from 'form-data';
 import fs from 'fs';
 import path from 'path';
